@@ -1,6 +1,6 @@
 {
   "name": "sourcejs-webpack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SourceJS webpack builder middleware.",
   "repository": {
     "type": "git",

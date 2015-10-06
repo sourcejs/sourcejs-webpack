@@ -32,9 +32,19 @@ var processRequest = function (req, res, next) {
         var outputPath = path.join(specPath, 'build/index.js');
         var insertReactTpl = fs.readFileSync(path.join(currentDir, '../templates/insert-react.ejs'), 'utf-8');
 
+        if (
+            (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'presentation') &&
+            fs.existsSync(outputPath)
+        ) {
+            req.specData.renderedHtml += '<script src="build/index.js"></script>';
+            next();
+            return;
+        }
+
         fs.outputFileSync(outputPath, ejs.render(insertReactTpl));
 
-        //if (false) {
+        global.__currentSpecInfo__ = req.specData.info;
+
         if (fs.existsSync(jsxFilePath)) {
             webpack({
                 entry: outputPath,
@@ -45,14 +55,21 @@ var processRequest = function (req, res, next) {
                 devtool: "#inline-source-map",
                 module: {
                     loaders: [
-                        {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader'}
+                        // TODO: load stripejs only for styleguide
+                        {test: /\.jsx?$/, loader: 'babel-loader!preejs'}
                     ]
                 },
                 resolveLoader: {
-                    root: path.join(currentDir, '../../node_modules')
+                    modulesDirectories: [
+                        path.join(currentDir, '../../node_modules'),
+                        path.join(currentDir, '../loaders'),
+                        'node_modules'
+                    ]
                 }
-            }, function(err) {
+            }, function(err, stats) {
                 if (err) console.log('error', err);
+                if (stats.compilation.errors) console.log(stats.compilation.errors.toString());
+                if (stats.compilation.warnings) console.log(stats.compilation.warnings.toString());
 
                 next();
             });
