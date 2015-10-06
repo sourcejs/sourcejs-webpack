@@ -1,0 +1,17 @@
+{
+  "name": "sourcejs-webpack",
+  "version": "0.1.0",
+  "description": "SourceJS webpack builder middleware.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sourcejs/sourcejs-webpack.git"
+  },
+  "homepage": "https://github.com/sourcejs/sourcejs-webpack",
+  "dependencies": {
+    "babel-core": "^5.8.25",
+    "babel-loader": "^5.3.2",
+    "ejs": "^2.3.4",
+    "fs-extra": "^0.24.0",
+    "webpack": "^1.12.2"
+  }
+}
